@@ -16,7 +16,7 @@
     var height = 400 - margin.top - margin.bottom;
     var width = 700 - margin.left - margin.right;
     function allData() {
-      d3.json("https://raw.githubusercontent.com/AyeshaRaza/D3Visual/master/us-10m.json", function (json) {
+      d3.json("https://raw.githubusercontent.com/ITCS4122Team8/ITCS4122Final/master/us-10m.json", function (json) {
         allPaths = json;
         item = {}
         for (i = 0; i < 838; i++) {
@@ -30,14 +30,14 @@
       });
     }
     function allData2() {
-      d3.csv("https://raw.githubusercontent.com/AyeshaRaza/D3Visual/master/losses2015_transformed.csv", function (error, data) {
+      d3.csv("https://raw.githubusercontent.com/ITCS4122Team8/ITCS4122Final/master/shrink_csv.ipynb", function (error, data) {
         allData = data;
         d3.selectAll("#chartBars").exit().remove();
         barChart(null);
       });
     }
     function allData2(id) {
-      d3.csv("https://raw.githubusercontent.com/AyeshaRaza/D3Visual/master/losses2015_transformed.csv", function (error, data) {
+      d3.csv("https://raw.githubusercontent.com/ITCS4122Team8/ITCS4122Final/master/shrink_csv.ipynb", function (error, data) {
         allData = data;
         d3.selectAll("#chartBars").remove();
         barChart(id);
