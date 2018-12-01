@@ -1,5 +1,5 @@
 /* ------------------------------------------------------------------------------
-File: geoMap.js
+File: geoMap.js 
 ------------------------------------------------------------------------------ */
 
 // Define Margin, Width & Height
@@ -12,12 +12,12 @@ var margin = {top: 5, right: 5, bottom: 5, left: 5},
 var projection = d3.geo.albersUsa()
     .scale(1280)
     .translate([width / 2, height / 2]);
-
+								  
 // Define Path
 var path = d3.geo.path().projection(projection);
 
 // Define color scale. A range of color to represent different shade of the color
-// In this example, we will represent the color Blue in different shades.
+// In this example, we will represent the color Blue in different shades. 
 var color = d3.scale.quantize()
     .range(["rgb(161,217,155)","rgb(116,196,118)",
             "rgb(65,171,93)","rgb(35,139,69)",
@@ -26,59 +26,59 @@ var color = d3.scale.quantize()
  // Define Tooltip
  var tooltip = d3.select("body").append("div")
      .attr("class", "tooltip")
-
+								
 // Define SVG
 var svg = d3.select("body").append("svg")
     .attr("width", width + margin.left + margin.right)
     .attr("height", height + margin.top + margin.bottom)
    .append("g")
-    .attr("transform", "translate(" + margin.left + "," + margin.right + ")");
+    .attr("transform", "translate(" + margin.left + "," + margin.right + ")");   
 
 // Load Data
-d3.csv("UNCCSampledSmall.csv", function(data) {
+d3.csv("us-pop.csv", function(data) {
     color.domain([
-        d3.min(data, function(d) { return d.Customer_Value_Score; }),
-        d3.max(data, function(d) { return d.Customer_Value_Score; })
+        d3.min(data, function(d) { return d.value; }), 
+        d3.max(data, function(d) { return d.value; })
     ]);
-
+    
     // Load GeoJSON Data
     d3.json("us-states.json", function(json) {
         for (var i = 0; i < data.length; i++) {
             var dataState = data[i].state;
-            var dataValue = parseFloat(data[i].Customer_Value_Score);
+            var dataValue = parseFloat(data[i].value);
             for (var j = 0; j < json.features.length; j++) {
                 var jsonState = json.features[j].properties.name;
-                if (dataState == jsonState) {
-                    json.features[j].properties.Customer_Value_Score = dataValue;
-                    break;
-                }
-            }
+				if (dataState == jsonState) {
+				    json.features[j].properties.value = dataValue;
+                    break;				
+				}
+            }		
         }
 
-    // Bind Data
+    // Bind Data 
     svg.selectAll("path")
         .data(json.features)
-        .enter()
+        .enter()    
         .append("path")
         .attr("class", "state-boundary")
         .attr("d", path)
-        .style("fill", function(d) { return color(d.properties.Customer_Value_Score); })
-        .on("mouseover", function(d) {
+        .style("fill", function(d) { return color(d.properties.value); })
+        .on("mouseover", function(d) {   
             tooltip.transition()
                .duration(200)
                .style("opacity", .9);
             tooltip.html("<strong>" + d.properties.name + "</strong>" + "<br/>" + "Population: " +
-                         (d.properties.Customer_Value_Score).toLocaleString() + " Million")
-               .style("left", (d3.event.pageX + 5) + "px")
-               .style("top", (d3.event.pageY - 28) + "px");
+                        (d.properties.value).toLocaleString() + " Million")			
+			   .style("left", (d3.event.pageX + 5) + "px")
+               .style("top", (d3.event.pageY - 28) + "px");		       
         })
         .on("mouseout", function(d) {
           tooltip.transition()
                .duration(500)
                .style("opacity", 0);
       });
-
-
+        
+    
     });
 });
 
