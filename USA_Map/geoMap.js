@@ -19,7 +19,7 @@ var path = d3.geo.path().projection(projection);
 
 
 var color = d3.scale.quantize()
-    .range(["rgb(161,217,155)", "rgb(116,196,118)",
+    .range(["rgb(161,217,155)", "rgb(196, 116, 162)",
             "rgb(171, 89, 65)", "rgb(35, 51, 139)",
             "rgb(83, 90, 0)"]);
 
@@ -72,7 +72,7 @@ d3.csv("sample.csv", function (data) {
                     .duration(200)
                     .style("opacity", .9);
             tooltip.html("<strong>" + d.properties.name + "</strong>" + "<br/>" + "<br/>" + "Credit Card Apply Clicked: " +
-                        (d.properties.Credit_Card_Apply_Clicked).toLocaleString() + " times")
+                        (d.properties.Credit_Card_Apply_Clicked) + " times")
                     .style("left", (d3.event.pageX + 5) + "px")
                     .style("top", (d3.event.pageY - 28) + "px");
             })
