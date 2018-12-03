@@ -4,6 +4,142 @@
 	<meta charset="UTF-8">
 	<title>Team 8 | Lendingtree Visualization</title>
 	<link rel="stylesheet" type="text/css" href="primary.css">
+	<script src="https://d3js.org/d3.v4.min.js"></script>
+  <script src="https://d3js.org/topojson.v2.min.js"></script>
+  <script src="https://d3js.org/d3-color.v1.min.js"></script>
+  <script src="https://d3js.org/d3-interpolate.v1.min.js"></script>
+
+  <script type="text/javascript">
+    allData();
+    allData2();
+    var allPaths;
+    var margin = { top: 10, right: 5, bottom: 30, left: 5 };
+    var height = 400 - margin.top - margin.bottom;
+    var width = 700 - margin.left - margin.right;
+    function allData() {
+      d3.json("https://raw.githubusercontent.com/AyeshaRaza/D3Visual/master/us-10m.json", function (json) {
+        allPaths = json;
+        item = {}
+        for (i = 0; i < 838; i++) {
+          j = allData[i].State_Code;
+          if (item[j] == null) {
+            item[j] = 0;
+          }
+          item[j] = item[j] + allData[i].Amount;
+        }
+        createMap();
+      });
+    }
+    function allData2() {
+      d3.csv("https://raw.githubusercontent.com/AyeshaRaza/D3Visual/master/losses2015_transformed.csv", function (error, data) {
+        allData = data;
+        d3.selectAll("#chartBars").exit().remove();
+        barChart(null);
+      });
+    }
+    function allData2(id) {
+      d3.csv("https://raw.githubusercontent.com/AyeshaRaza/D3Visual/master/losses2015_transformed.csv", function (error, data) {
+        allData = data;
+        d3.selectAll("#chartBars").remove();
+        barChart(id);
+      });
+    }
+    function barChart(id) {
+      if (id == null) {
+        allData = allData;
+      }
+      else {
+        allData = allData.filter(function (d) {
+          if (d.State_Code == id) {
+            return d;
+          }
+        });
+      }
+      var margin = { top: 20, right: 0, bottom: 100, left: 80 },
+        width = 500 - margin.left - margin.right,
+        height = 600 - margin.top - margin.bottom;
+      var x = d3.scaleBand().range([0, width])
+        .padding(0.1)
+      var y = d3.scaleLinear().range([height, 0]);
+      var svg = d3.select("#bars").append("svg")
+        .attr("id", "chartBars")
+        .attr("height", height + margin.top + margin.bottom)
+        .attr("width", width + margin.left + margin.right)
+        .append("g")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+      allData.sort(function (d, i) {
+        return i.Amount - d.Amount;
+      });
+      allData.forEach(function (d) {
+        d.Amount = parseInt(d.Amount);
+      });
+      x.domain(allData.map(function (d) { return d.Damage_Descp; }));
+      y.domain([d3.min(allData, function (d) { return d.Amount; }), d3.max(allData, function (d) { return d.Amount; })]);
+      svg.append("g")
+        .attr("id", "chartBars")
+        .attr("transform", "translate(0," + height + ")")
+        .call(d3.axisBottom(x))
+        .selectAll("text")
+        .style("text-anchor", "end")
+        .attr("dx", "-.9em")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+        .attr("transform", "rotate(270)");
+      svg.append("g")
+          .attr("id", "chartBars")
+          .call(d3.axisLeft(y));
+      svg.selectAll(".bar").data(allData)
+        .enter().append("rect")
+        .attr("id", "chartBars")
+        .attr("class", "bar")
+        .attr("fill", d3.color("steelblue").brighter())
+        .attr("x", function (d) { return x(d.Damage_Descp); })
+        .attr("width", x.bandwidth())
+        .attr("y", function (d) { return y(d.Amount); })
+        .attr("height", function (d) { return height - y(d.Amount); })
+    }
+    function createMap() {
+      var svg = d3.select("#map")
+        .append("svg")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+        .append("g")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+      var projection = d3.geoAlbersUsa()
+        .translate([width / 2, height / 2])
+        .scale([900]);
+      var path = d3.geoPath()
+        .projection(projection);
+      var states = svg.selectAll("path")
+        .data(topojson.feature(allPaths, allPaths.objects.states).features)
+        .enter()
+        .append("path")
+        .attr("d", path)
+        .attr("fill", function (d) {
+          return d3.hsl(190, 1,
+            d3.scaleLinear().domain([100000, 666666666])(item[d.id]));
+        }
+        )
+        .style("stroke", "white")
+        .on("mouseover", function (d) {
+          d3.select(this)
+            .attr('opacity', 1)
+            .attr("fill", "red"),
+            d3.selectAll("#chartBars").exit().remove();
+          allData2(d.id);
+        })
+        .on("mouseout", function (d) {
+          d3.select(this)
+            .attr('opacity', 1)
+            .attr("fill", function (d) {
+              return d3.hsl(190, 1,
+                d3.scaleLinear().domain([100000, 666666666])(item[d.id]));
+            }
+            )
+          d3.selectAll("#chartBars").exit().remove();
+          allData2(null);
+        });
+    }
+  </script>
 </head>
 <body>
 <div class="container">
@@ -16,12 +152,11 @@
 			<li><img src="images/lt_logo_small.png" height="20"></li>
 		</ul>
 	</div>
-
-
-
 	<div class="content">
-		<h1>D3 visual goes here can remove gray box</h1>
+		<h2>Title of visualization</h2>
 	</div>
+	<div id="map" style="float:left; padding: 40px 40px;"></div>
+	<div id="bars" style="float:left; padding: 40px 40px;""></div>
 
 </div>
 
