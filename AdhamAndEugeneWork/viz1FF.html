@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <script src="https://d3js.org/d3.v4.min.js"></script>
+
 <style type="text/css">
 
 /* Legend Font Style */
@@ -37,8 +38,8 @@ body {
 var width = 960;
 var height = 500;
 
-var lowColor = '#f9f9f9'
-var highColor = '#bc2a66'
+var lowColor = '#ff5c33'
+var highColor = '#000099'
 
 // D3 Projection
 var projection = d3.geoAlbersUsa()
@@ -100,8 +101,21 @@ d3.csv("cvs_sample.csv", function(data) {
       .attr("d", path)
       .style("stroke", "#fff")
       .style("stroke-width", "1")
-      .style("fill", function(d) { return ramp(d.properties.value) });
-    
+      .style("fill", function(d) { return ramp(d.properties.value) })
+      .on("mouseover", function (d) {
+                tooltip.transition()
+                    .duration(200)
+                    .style("opacity", .9);
+                tooltip.html("<strong>" + d.properties.name )
+                    //+ "</strong>" + "<br/>" + "<br/>" + "Credit Card Apply Clicked: " +(d.properties.value) + " times")
+                    .style("left", (d3.event.pageX + 5) + "px")
+                    .style("top", (d3.event.pageY - 28) + "px");
+            })
+            .on("mouseout", function (d) {
+                tooltip.transition()
+                    .duration(500)
+                    .style("opacity", 0);
+            });
     // add a legend
     var w = 140, h = 300;
 
