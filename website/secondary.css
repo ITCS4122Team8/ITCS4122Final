@@ -1,0 +1,4 @@
+.nav li a:hover:not(.active) {
+    background-color: rgb(60,188,103);
+    color: white;
+}
