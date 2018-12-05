@@ -152,7 +152,7 @@ path:hover {
                         tooltip.transition()
                             .duration(200)
                             .style("opacity", .9);
-                    tooltip.html("<strong>" + d.properties.name  + "</strong>" + "<br/>" + "Customer Value Score: " +(d.properties.Customer_Value_Score))
+                    tooltip.html("<strong>" + d.properties.name  + "</strong>" + "<br/>" + "Customer Value Score: " +(d.properties.Customer_Value_Score) + "<br/>" + "Page Views: " + (d.properties.Page_Views))
                             .style("left", (d3.event.pageX) + "px")
                             .style("top", (d3.event.pageY) + "px");
                     })
@@ -254,7 +254,7 @@ d3.csv("productReportingPerState.csv", function(error, data) {
   // append the rectangles for the bar chart
   svg.selectAll(".bar")
       .data(data)
-    .enter().append("rect")
+      .enter().append("rect")
       .attr("class", "bar")
       .attr("x", function(d) { return x(d.Product_Reporting); })
       .attr("width", x.bandwidth())
@@ -269,6 +269,8 @@ d3.csv("productReportingPerState.csv", function(error, data) {
   // add the y Axis
   svg.append("g")
       .call(d3.axisLeft(y));
+
+  
 
 });
 }
