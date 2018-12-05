@@ -54,6 +54,11 @@
   fill: blue;
 }
 
+#inner {
+  width: 50%;
+  margin: 0 auto;
+}
+
 
 .bar { fill: steelblue; }
 
@@ -99,7 +104,8 @@ path:hover {
     <div class="tooltip" class="hidden">
         <p><span id="label"></span></p>
     </div>
-    <script type="text/javascript">
+
+    <script id="inner" type="text/javascript">
         createMap();
         createBar();
       function createMap()
