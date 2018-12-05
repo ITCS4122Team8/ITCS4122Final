@@ -10,7 +10,7 @@
             background-color: #ffffff;
         }
         /* Legend Position Style */
-        .legend {
+        .legend {   
             position: absolute;
             left: 20px;
             top: 30px;
@@ -42,8 +42,13 @@
   fill: steelblue;
 }
 .bar:hover {
-  fill: brown;
+  fill: blue;
 }
+
+
+.bar { fill: steelblue; }
+
+
 .bar-chart text {
   fill: black;
   font: 10px sans-serif;
@@ -58,6 +63,11 @@
   stroke: #000;
   shape-rendering: crispEdges;
 }
+
+path:hover {
+	fill-opacity: .6;
+    
+}
 </style>
 
     <h1 style="text-align:left; color:steelblue">
@@ -70,6 +80,7 @@
     </div>
     <script type="text/javascript">
         createMap();
+        createBar();
       function createMap()
       {
         //Width and height of map
@@ -81,8 +92,8 @@
         },
             width = 1060 - margin.left - margin.right,
             height = 620 - margin.top - margin.bottom;
-        var lowColor = '#f9f9f9'
-        var highColor = '#bc2a66'
+        var lowColor = '#ccccff'
+        var highColor = '#660066'
         // D3 Projection
         var projection = d3.geoAlbersUsa()
             .translate([width / 2, height / 2]) // translate to center of screen
@@ -141,7 +152,7 @@
                         tooltip.transition()
                             .duration(200)
                             .style("opacity", .9);
-                    tooltip.html("<strong>" + d.properties.name  + "</strong>" + "<br/>" + "Customer Value Score: " +(d.properties.Customer_Value_Score))
+                    tooltip.html("<strong>" + d.properties.name  + "</strong>" + "<br/>" + "Customer Value Score: " +(d.properties.Customer_Value_Score) + "<br/>" + "Page Views: " + (d.properties.Page_Views))
                             .style("left", (d3.event.pageX) + "px")
                             .style("top", (d3.event.pageY) + "px");
                     })
@@ -192,7 +203,8 @@
 }
 
 //BAR GRAPH
-
+function createBar()
+{
 // set the dimensions and margins of the graph
 var margin = {top: 20, right: 20, bottom: 30, left: 40},
     width = 960 - margin.left - margin.right,
@@ -222,8 +234,17 @@ d3.csv("productReportingPerState.csv", function(error, data) {
   console.log(data);
 
   // format the data
+  /*
   data.forEach(function(d) {
     d.Page_Views = +d.Page_Views;
+  });
+*/
+
+  data.sort(function(d,i){
+      return i.Page_Views - d.Page_Views;
+  });
+  data.forEach(function(d){
+      d.Page_Views = parseInt(d.Page_Views);
   });
 
   // Scale the range of the data in the domains
@@ -233,7 +254,7 @@ d3.csv("productReportingPerState.csv", function(error, data) {
   // append the rectangles for the bar chart
   svg.selectAll(".bar")
       .data(data)
-    .enter().append("rect")
+      .enter().append("rect")
       .attr("class", "bar")
       .attr("x", function(d) { return x(d.Product_Reporting); })
       .attr("width", x.bandwidth())
@@ -249,12 +270,15 @@ d3.csv("productReportingPerState.csv", function(error, data) {
   svg.append("g")
       .call(d3.axisLeft(y));
 
-});
+  
 
+});
+}
     
 </script>
 </head>
 <body>
+
  
 </body>
 </html>
